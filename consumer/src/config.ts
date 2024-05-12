@@ -1,11 +1,16 @@
 import { config } from "dotenv";
-
 config();
 
-export const rmqUser = String(process.env.RABBITMQ_USERNAME);
+export const rmqUser = String(process.env.RABBITMQ_USERNAME || "Dito_developer");
 
-export const rmqPass = String(process.env.RABBITMQ_PASSWORD);
+export const rmqPass = String(process.env.RABBITMQ_PASSWORD || "123456789");
 
-export const rmqhost = String(process.env.RABBITMQ_URL);
+export const rmqhost = String(process.env.RABBITMQ_URL || "localhost");
 
-export const NOTIFICATION_QUEUE = "@notification";
+export const rmNotificationQuee = String(process.env.NOTIFICATION_QUEUE || "@notification");
+
+export const queeAckRequired = String(process.env.QUEE_ACK_REQUIRED || "false");
+
+
+
+ 

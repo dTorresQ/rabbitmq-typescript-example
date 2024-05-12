@@ -23,14 +23,22 @@ class RabbitMQConnection {
                 this.connected = true;
             try {
                 console.log(`⌛️ Connecting to Rabbit-MQ Server`);
-                this.connection = yield amqplib_1.default.connect(`amqp://${config_1.rmqUser}:${config_1.rmqPass}@${config_1.rmqhost}:5672`);
+                console.log(`rmqUser: ${config_1.rmqUser}`);
+                console.log(`rmqPass: ${config_1.rmqPass}`);
+                console.log(`rmqhost: ${config_1.rmqhost}`);
+                console.log(`NOTIFICATION_QUEUE: ${config_1.NOTIFICATION_QUEUE}`);
+                console.log(`Connection:  amqp://${config_1.rmqhost}:5672`);
+                // this.connection = await client.connect(
+                //   `amqp://${rmqUser}:${rmqPass}@${rmqhost}:15672`
+                // );
+                this.connection = yield amqplib_1.default.connect(`amqp://${config_1.rmqhost}:5672`);
                 console.log(`✅ Rabbit MQ Connection is ready`);
                 this.channel = yield this.connection.createChannel();
                 console.log(`🛸 Created RabbitMQ Channel successfully`);
-                yield this.startListeningToNewMessages();
+                //await this.startListeningToNewMessages();
             }
             catch (error) {
-                console.error(error);
+                console.error(`ERROR: ${error}`);
                 console.error(`Not connected to MQ Server`);
             }
         });
@@ -41,11 +49,12 @@ class RabbitMQConnection {
                 durable: true,
             });
             this.channel.consume(config_1.NOTIFICATION_QUEUE, (msg) => {
+                var _a;
                 {
                     if (!msg) {
                         return console.error(`Invalid incoming message`);
                     }
-                    handleIncomingNotification(msg);
+                    handleIncomingNotification((_a = msg === null || msg === void 0 ? void 0 : msg.content) === null || _a === void 0 ? void 0 : _a.toString());
                     this.channel.ack(msg);
                 }
             }, {
@@ -54,6 +63,22 @@ class RabbitMQConnection {
         });
     }
     sendToQueue(queue, message) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                if (!this.channel) {
+                    yield this.connect();
+                }
+                this.channel.sendToQueue(queue, Buffer.from(JSON.stringify(message)), {
+                    persistent: true,
+                });
+            }
+            catch (error) {
+                console.error(error);
+                throw error;
+            }
+        });
+    }
+    sendToExchange(queue, message) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 if (!this.channel) {
@@ -69,9 +94,9 @@ class RabbitMQConnection {
     }
 }
 const handleIncomingNotification = (msg) => {
-    var _a;
     try {
-        const parsedMessage = JSON.parse((_a = msg === null || msg === void 0 ? void 0 : msg.content) === null || _a === void 0 ? void 0 : _a.toString());
+        const parsedMessage = JSON.parse(msg);
+        console.log(`Received Notification`, parsedMessage);
         // Implement your own notification flow
     }
     catch (error) {

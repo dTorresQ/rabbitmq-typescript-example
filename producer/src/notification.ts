@@ -8,5 +8,5 @@ export type INotification = {
 
 export const sendNotification = async (notification: INotification) => {
   await mqConnection.sendToQueue(NOTIFICATION_QUEUE, notification);
-  console.log(`Sent the notification to consumer`);
+  console.log("message " + JSON.stringify(notification));
 };

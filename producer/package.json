@@ -4,13 +4,13 @@
   },
   "dependencies": {
     "amqplib": "^0.10.3",
-    "dotenv": "^16.0.3"
+    "dotenv": "^16.4.5"
   },
   "devDependencies": {
+    "@types/amqplib": "^0.10.1",
     "@types/node": "^18.16.0",
     "nodemon": "^2.0.22",
     "tsc-watch": "^6.0.0",
-    "typescript": "^5.0.4",
-    "@types/amqplib": "^0.10.1"
+    "typescript": "^5.0.4"
   }
 }

@@ -17,6 +17,6 @@ const config_1 = require("./config");
 const connection_1 = __importDefault(require("./connection"));
 const sendNotification = (notification) => __awaiter(void 0, void 0, void 0, function* () {
     yield connection_1.default.sendToQueue(config_1.NOTIFICATION_QUEUE, notification);
-    console.log(`Sent the notification to consumer`);
+    console.log("message " + JSON.stringify(notification));
 });
 exports.sendNotification = sendNotification;

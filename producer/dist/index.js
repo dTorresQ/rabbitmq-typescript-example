@@ -8,18 +8,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const connection_1 = __importDefault(require("./connection"));
 const notification_1 = require("./notification");
+const wait = 1000;
+//mqConnection.connect();
 const send = () => __awaiter(void 0, void 0, void 0, function* () {
-    yield connection_1.default.connect();
     const newNotification = {
-        title: "You have received new notification",
-        description: "You have received new incmoing notification from the producer service",
+        title: " New notification",
+        description: Math.random().toString(32).slice(2, 6),
     };
     (0, notification_1.sendNotification)(newNotification);
+    // sleepLoop(7, () => console.log("Hola")); 
 });
-send();
+function sleep(ms) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    });
+}
+function sleepLoop(number, cb) {
+    return __awaiter(this, void 0, void 0, function* () {
+        while (number--) {
+            yield sleep(wait);
+            cb();
+        }
+    });
+}
+sleepLoop(6, send);
+//send(); 
