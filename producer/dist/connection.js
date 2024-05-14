@@ -34,6 +34,13 @@ class RabbitMQConnection {
                 this.connection = yield amqplib_1.default.connect(`amqp://${config_1.rmqhost}:5672`);
                 console.log(`✅ Rabbit MQ Connection is ready`);
                 this.channel = yield this.connection.createChannel();
+                this.channel.assertExchange(config_1.exchangeName, config_1.exchangeType);
+                this.channel.assertQueue("@ms-1", { durable: true });
+                this.channel.assertQueue("@ms-2", { durable: true });
+                this.channel.bindQueue("@ms-1", config_1.exchangeName, "");
+                this.channel.bindQueue("@ms-2", config_1.exchangeName, "");
+                //this.channel.bindQueue("@ms", exchangeName, "");
+                //this.channel.assertQueue(NOTIFICATION_QUEUE);
                 console.log(`🛸 Created RabbitMQ Channel successfully`);
                 //await this.startListeningToNewMessages();
             }
@@ -78,13 +85,13 @@ class RabbitMQConnection {
             }
         });
     }
-    sendToExchange(queue, message) {
+    sendToExchange(exchange, message) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 if (!this.channel) {
                     yield this.connect();
                 }
-                this.channel.sendToQueue(queue, Buffer.from(JSON.stringify(message)));
+                this.channel.publish(exchange, "xy", Buffer.from(JSON.stringify(message)));
             }
             catch (error) {
                 console.error(error);

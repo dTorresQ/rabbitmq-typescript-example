@@ -17,8 +17,8 @@ const send = () => __awaiter(void 0, void 0, void 0, function* () {
         title: " New notification",
         description: Math.random().toString(32).slice(2, 6),
     };
-    (0, notification_1.sendNotification)(newNotification);
-    // sleepLoop(7, () => console.log("Hola")); 
+    (0, notification_1.sendNotificationToExchange)(newNotification);
+    //sendNotificationToExchange(newNotification);       
 });
 function sleep(ms) {
     return __awaiter(this, void 0, void 0, function* () {

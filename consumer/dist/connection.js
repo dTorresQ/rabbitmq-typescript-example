@@ -62,6 +62,25 @@ class RabbitMQConnection {
             }, this.queeConsumOptions);
         });
     }
+    consumeExchange(handleIncomingNotification) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.channel.assertExchange(config_1.exchangeName, config_1.exchangeType);
+            yield this.channel.assertQueue(config_1.rmNotificationQuee, {
+                durable: true,
+            });
+            yield this.channel.bindQueue(config_1.rmNotificationQuee, config_1.exchangeName, "");
+            this.channel.consume(config_1.rmNotificationQuee, (msg) => {
+                var _a;
+                {
+                    if (!msg) {
+                        return console.error(`Invalid incoming message`);
+                    }
+                    handleIncomingNotification((_a = msg === null || msg === void 0 ? void 0 : msg.content) === null || _a === void 0 ? void 0 : _a.toString());
+                    //this.channel.ack(msg);
+                }
+            }, this.queeConsumOptions);
+        });
+    }
     stringToBoolean(str) {
         return str.toLowerCase() === 'true';
     }

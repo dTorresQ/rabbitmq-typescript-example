@@ -8,14 +8,14 @@ const handleIncomingNotification = (msg: string) => {
 
     // Implement your own notification flow
   } catch (error) {
-    console.error(`Error While Parsing the message`);
+    console.error(`Error While Parsing the message: ${error}` );
   }
 };
 
 const listen = async () => {
   await mqConnection.connect();
 
-  await mqConnection.consume(handleIncomingNotification);
+  await mqConnection.consumeExchange(handleIncomingNotification);
 };
 
 listen();
