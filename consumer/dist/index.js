@@ -20,11 +20,11 @@ const handleIncomingNotification = (msg) => {
         // Implement your own notification flow
     }
     catch (error) {
-        console.error(`Error While Parsing the message`);
+        console.error(`Error While Parsing the message: ${error}`);
     }
 };
 const listen = () => __awaiter(void 0, void 0, void 0, function* () {
     yield connection_1.default.connect();
-    yield connection_1.default.consume(handleIncomingNotification);
+    yield connection_1.default.consumeExchange(handleIncomingNotification);
 });
 listen();

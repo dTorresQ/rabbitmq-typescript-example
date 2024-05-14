@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendNotification = void 0;
+exports.sendNotificationToExchange = exports.sendNotification = void 0;
 const config_1 = require("./config");
 const connection_1 = __importDefault(require("./connection"));
 const sendNotification = (notification) => __awaiter(void 0, void 0, void 0, function* () {
@@ -20,3 +20,8 @@ const sendNotification = (notification) => __awaiter(void 0, void 0, void 0, fun
     console.log("message " + JSON.stringify(notification));
 });
 exports.sendNotification = sendNotification;
+const sendNotificationToExchange = (notification) => __awaiter(void 0, void 0, void 0, function* () {
+    yield connection_1.default.sendToExchange(config_1.exchangeName, notification);
+    console.log("message " + JSON.stringify(notification));
+});
+exports.sendNotificationToExchange = sendNotificationToExchange;

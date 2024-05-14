@@ -1,6 +1,6 @@
 import client, { Connection, Channel, ConsumeMessage } from "amqplib";
 
-import { rmqUser, rmqPass, rmqhost, NOTIFICATION_QUEUE } from "./config";
+import { rmqUser, rmqPass, rmqhost, NOTIFICATION_QUEUE, exchangeName, exchangeType } from "./config";
 import { Console, log } from "console";
 
 class RabbitMQConnection {
@@ -21,7 +21,7 @@ class RabbitMQConnection {
       console.log(`Connection:  amqp://${rmqhost}:5672`);
 
 
-   
+
       // this.connection = await client.connect(
       //   `amqp://${rmqUser}:${rmqPass}@${rmqhost}:15672`
       // );
@@ -32,6 +32,14 @@ class RabbitMQConnection {
       console.log(`✅ Rabbit MQ Connection is ready`);
 
       this.channel = await this.connection.createChannel();
+      this.channel.assertExchange(exchangeName, exchangeType);
+      this.channel.assertQueue("@ms-1", {durable: true});
+      this.channel.assertQueue("@ms-2", {durable: true});
+      this.channel.bindQueue("@ms-1", exchangeName, "");
+      this.channel.bindQueue("@ms-2", exchangeName, "");
+      //this.channel.bindQueue("@ms", exchangeName, "");
+      //this.channel.assertQueue(NOTIFICATION_QUEUE);
+      
 
       console.log(`🛸 Created RabbitMQ Channel successfully`);
 
@@ -40,16 +48,16 @@ class RabbitMQConnection {
       console.error(`ERROR: ${error}`);
       console.error(`Not connected to MQ Server`);
     } 
-  }
-
+  } 
+ 
   async startListeningToNewMessages() {
     await this.channel.assertQueue(NOTIFICATION_QUEUE, {
-      durable: true, 
+      durable: true,
     });
 
-    this.channel.consume( 
-      NOTIFICATION_QUEUE,   
-      (msg) => {  
+    this.channel.consume(
+      NOTIFICATION_QUEUE,
+      (msg) => {
         {
           if (!msg) {
             return console.error(`Invalid incoming message`);
@@ -63,13 +71,8 @@ class RabbitMQConnection {
       {
         noAck: false,
       }
-    );   
-  } 
-
- 
- 
-
-
+    );
+  }
 
   async sendToQueue(queue: string, message: any) {
     try {
@@ -77,32 +80,31 @@ class RabbitMQConnection {
         await this.connect();
       }
 
-      this.channel.sendToQueue(queue, Buffer.from(JSON.stringify(message)),{
+      this.channel.sendToQueue(queue, Buffer.from(JSON.stringify(message)), {
         persistent: true,
-        
+
       });
     } catch (error) {
       console.error(error);
       throw error;
-    } 
+    }
   }
 
- 
 
 
-
-
-  async sendToExchange(queue: string, message: any) {
+  async sendToExchange(exchange: string, message: any) {
     try {
       if (!this.channel) {
         await this.connect();
       }
-
-      this.channel.sendToQueue(queue, Buffer.from(JSON.stringify(message)));
+      this.channel.publish(
+        exchange,
+        "xy",
+        Buffer.from(JSON.stringify(message)));
     } catch (error) {
       console.error(error);
       throw error;
-    } 
+    }
   }
 
 }
@@ -125,4 +127,3 @@ const handleIncomingNotification = (msg: string) => {
 const mqConnection = new RabbitMQConnection();
 
 export default mqConnection;
-   

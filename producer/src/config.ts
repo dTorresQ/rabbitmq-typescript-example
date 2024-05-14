@@ -9,3 +9,7 @@ export const rmqPass = String("123456789" || process.env.RABBITMQ_PASSWORD);
 export const rmqhost = String("localhost" || process.env.RABBITMQ_URL);
 
 export const NOTIFICATION_QUEUE = "@notification";
+
+export const exchangeType= ("fanout" || process.env.EXCHANGETYPE);
+
+export const exchangeName = ("my-fanout" || process.env.EXCHANGE);
