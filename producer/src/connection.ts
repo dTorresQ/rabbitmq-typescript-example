@@ -1,6 +1,6 @@
 import client, { Connection, Channel, ConsumeMessage } from "amqplib";
 
-import { rmqUser, rmqPass, rmqhost, NOTIFICATION_QUEUE, exchangeName, exchangeType } from "./config";
+import { rmqUser, rmqPass, rmqhost, NOTIFICATION_QUEUE, exchangeName, exchangeType, routingKey } from "./config";
 import { Console, log } from "console";
 
 class RabbitMQConnection {
@@ -32,14 +32,22 @@ class RabbitMQConnection {
       console.log(`✅ Rabbit MQ Connection is ready`);
 
       this.channel = await this.connection.createChannel();
+
       this.channel.assertExchange(exchangeName, exchangeType);
-      this.channel.assertQueue("@ms-1", {durable: true});
-      this.channel.assertQueue("@ms-2", {durable: true});
-      this.channel.bindQueue("@ms-1", exchangeName, "");
-      this.channel.bindQueue("@ms-2", exchangeName, "");
+      this.channel.assertQueue("@ms-1", { durable: true });
+      this.channel.assertQueue("@ms-2", { durable: true });
+      this.channel.assertQueue("@ms-3", { durable: true });
+      this.channel.bindQueue("@ms-1", exchangeName, "CREAR_VENTA");
+      this.channel.bindQueue("@ms-2", exchangeName, "CREAR_VENTA");
+      this.channel.bindQueue("@ms-1", exchangeName, "ZYX");
+      this.channel.bindQueue("@ms-2", exchangeName, "ZYX");
+      this.channel.bindQueue("@ms-1", exchangeName, "T");
+      this.channel.bindQueue("@ms-2", exchangeName, "U");
+      this.channel.bindQueue("@ms-3", exchangeName, "BATCH_LIQUIDACION");
+      this.channel.bindQueue("@ms-1", exchangeName, "BATCH_LIQUIDACION");
       //this.channel.bindQueue("@ms", exchangeName, "");
       //this.channel.assertQueue(NOTIFICATION_QUEUE);
-      
+
 
       console.log(`🛸 Created RabbitMQ Channel successfully`);
 
@@ -47,9 +55,9 @@ class RabbitMQConnection {
     } catch (error) {
       console.error(`ERROR: ${error}`);
       console.error(`Not connected to MQ Server`);
-    } 
-  } 
- 
+    }
+  }
+
   async startListeningToNewMessages() {
     await this.channel.assertQueue(NOTIFICATION_QUEUE, {
       durable: true,
@@ -97,9 +105,10 @@ class RabbitMQConnection {
       if (!this.channel) {
         await this.connect();
       }
+      console.log("**** routingKey = " + routingKey)
       this.channel.publish(
         exchange,
-        "xy",
+        routingKey,
         Buffer.from(JSON.stringify(message)));
     } catch (error) {
       console.error(error);

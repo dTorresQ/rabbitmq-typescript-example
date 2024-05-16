@@ -65,10 +65,17 @@ class RabbitMQConnection {
     consumeExchange(handleIncomingNotification) {
         return __awaiter(this, void 0, void 0, function* () {
             this.channel.assertExchange(config_1.exchangeName, config_1.exchangeType);
-            yield this.channel.assertQueue(config_1.rmNotificationQuee, {
-                durable: true,
-            });
-            yield this.channel.bindQueue(config_1.rmNotificationQuee, config_1.exchangeName, "");
+            this.channel.assertQueue("@ms-1", { durable: true });
+            this.channel.assertQueue("@ms-2", { durable: true });
+            this.channel.assertQueue("@ms-3", { durable: true });
+            this.channel.bindQueue("@ms-1", config_1.exchangeName, "CREAR_VENTA");
+            this.channel.bindQueue("@ms-2", config_1.exchangeName, "CREAR_VENTA");
+            this.channel.bindQueue("@ms-1", config_1.exchangeName, "ZYX");
+            this.channel.bindQueue("@ms-2", config_1.exchangeName, "ZYX");
+            this.channel.bindQueue("@ms-1", config_1.exchangeName, "T");
+            this.channel.bindQueue("@ms-2", config_1.exchangeName, "U");
+            this.channel.bindQueue("@ms-3", config_1.exchangeName, "BATCH_LIQUIDACION");
+            this.channel.bindQueue("@ms-1", config_1.exchangeName, "BATCH_LIQUIDACION");
             this.channel.consume(config_1.rmNotificationQuee, (msg) => {
                 var _a;
                 {

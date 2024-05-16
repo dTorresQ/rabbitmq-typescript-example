@@ -37,8 +37,15 @@ class RabbitMQConnection {
                 this.channel.assertExchange(config_1.exchangeName, config_1.exchangeType);
                 this.channel.assertQueue("@ms-1", { durable: true });
                 this.channel.assertQueue("@ms-2", { durable: true });
-                this.channel.bindQueue("@ms-1", config_1.exchangeName, "");
-                this.channel.bindQueue("@ms-2", config_1.exchangeName, "");
+                this.channel.assertQueue("@ms-3", { durable: true });
+                this.channel.bindQueue("@ms-1", config_1.exchangeName, "CREAR_VENTA");
+                this.channel.bindQueue("@ms-2", config_1.exchangeName, "CREAR_VENTA");
+                this.channel.bindQueue("@ms-1", config_1.exchangeName, "ZYX");
+                this.channel.bindQueue("@ms-2", config_1.exchangeName, "ZYX");
+                this.channel.bindQueue("@ms-1", config_1.exchangeName, "T");
+                this.channel.bindQueue("@ms-2", config_1.exchangeName, "U");
+                this.channel.bindQueue("@ms-3", config_1.exchangeName, "BATCH_LIQUIDACION");
+                this.channel.bindQueue("@ms-1", config_1.exchangeName, "BATCH_LIQUIDACION");
                 //this.channel.bindQueue("@ms", exchangeName, "");
                 //this.channel.assertQueue(NOTIFICATION_QUEUE);
                 console.log(`🛸 Created RabbitMQ Channel successfully`);
@@ -91,7 +98,8 @@ class RabbitMQConnection {
                 if (!this.channel) {
                     yield this.connect();
                 }
-                this.channel.publish(exchange, "xy", Buffer.from(JSON.stringify(message)));
+                console.log("**** routingKey = " + config_1.routingKey);
+                this.channel.publish(exchange, config_1.routingKey, Buffer.from(JSON.stringify(message)));
             }
             catch (error) {
                 console.error(error);

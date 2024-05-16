@@ -1,6 +1,6 @@
 import client, { Connection, Channel, Options } from "amqplib";
 
-import { rmqUser, rmqPass, rmqhost, rmNotificationQuee, queeAckRequired, exchangeName, exchangeType } from "./config";
+import { rmqUser, rmqPass, rmqhost, rmNotificationQuee, queeAckRequired, exchangeName, exchangeType, pattern } from "./config";
 
 type HandlerCB = (msg: string) => any;
 
@@ -74,27 +74,34 @@ class RabbitMQConnection {
 
   async consumeExchange(handleIncomingNotification: HandlerCB) {
 
+
+
     this.channel.assertExchange(exchangeName, exchangeType);
-
-    await this.channel.assertQueue(rmNotificationQuee, {
-      durable: true,
-    });
-
-    await this.channel.bindQueue(rmNotificationQuee, exchangeName,"");
+    this.channel.assertQueue("@ms-1", { durable: true });
+    this.channel.assertQueue("@ms-2", { durable: true });
+    this.channel.assertQueue("@ms-3", { durable: true });
+    this.channel.bindQueue("@ms-1", exchangeName, "CREAR_VENTA");
+    this.channel.bindQueue("@ms-2", exchangeName, "CREAR_VENTA");
+    this.channel.bindQueue("@ms-1", exchangeName, "ZYX");
+    this.channel.bindQueue("@ms-2", exchangeName, "ZYX");
+    this.channel.bindQueue("@ms-1", exchangeName, "T");
+    this.channel.bindQueue("@ms-2", exchangeName, "U");
+    this.channel.bindQueue("@ms-3", exchangeName, "BATCH_LIQUIDACION");
+    this.channel.bindQueue("@ms-1", exchangeName, "BATCH_LIQUIDACION");
 
     this.channel.consume(rmNotificationQuee,
       (msg) => {
         {
           if (!msg) {
             return console.error(`Invalid incoming message`);
-          } 
+          }
 
           handleIncomingNotification(msg?.content?.toString());
 
           //this.channel.ack(msg);
         }
       }
-      , this.queeConsumOptions 
+      , this.queeConsumOptions
 
     );
   }
