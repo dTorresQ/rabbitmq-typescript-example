@@ -68,14 +68,16 @@ class RabbitMQConnection {
             this.channel.assertQueue("@ms-1", { durable: true });
             this.channel.assertQueue("@ms-2", { durable: true });
             this.channel.assertQueue("@ms-3", { durable: true });
-            this.channel.bindQueue("@ms-1", config_1.exchangeName, "CREAR_VENTA");
-            this.channel.bindQueue("@ms-2", config_1.exchangeName, "CREAR_VENTA");
-            this.channel.bindQueue("@ms-1", config_1.exchangeName, "ZYX");
-            this.channel.bindQueue("@ms-2", config_1.exchangeName, "ZYX");
-            this.channel.bindQueue("@ms-1", config_1.exchangeName, "T");
-            this.channel.bindQueue("@ms-2", config_1.exchangeName, "U");
-            this.channel.bindQueue("@ms-3", config_1.exchangeName, "BATCH_LIQUIDACION");
-            this.channel.bindQueue("@ms-1", config_1.exchangeName, "BATCH_LIQUIDACION");
+            this.channel.bindQueue("@ms-1", config_1.exchangeName, "*.orange.*");
+            this.channel.bindQueue("@ms-2", config_1.exchangeName, "*.*.rabbit");
+            this.channel.bindQueue("@ms-3", config_1.exchangeName, "lazy.#");
+            //this.channel.bindQueue("@ms-2", exchangeName, "log.x.#");
+            // this.channel.bindQueue("@ms-1", exchangeName, "ZYX");
+            // this.channel.bindQueue("@ms-2", exchangeName, "ZYX");
+            // this.channel.bindQueue("@ms-1", exchangeName, "T");
+            // this.channel.bindQueue("@ms-2", exchangeName, "U");
+            // this.channel.bindQueue("@ms-3", exchangeName, "BATCH_LIQUIDACION");
+            // this.channel.bindQueue("@ms-1", exchangeName, "BATCH_LIQUIDACION");
             this.channel.consume(config_1.rmNotificationQuee, (msg) => {
                 var _a;
                 {

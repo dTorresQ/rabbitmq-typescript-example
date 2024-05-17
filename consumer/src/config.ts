@@ -11,9 +11,9 @@ export const rmNotificationQuee = String(process.env.NOTIFICATION_QUEUE || "@not
 
 export const queeAckRequired = String(process.env.QUEE_ACK_REQUIRED || "true");
 
-export const exchangeType= ("direct" || process.env.EXCHANGETYPE);
+export const exchangeType= ("topic" || process.env.EXCHANGETYPE);
 
-export const exchangeName = ("my-direct" || process.env.EXCHANGE);
+export const exchangeName = ("my-topic" || process.env.EXCHANGE);
 
 export const pattern = String("" || process.env.PATTERN);
 
